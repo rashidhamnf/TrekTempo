@@ -28,11 +28,11 @@ class _AddEventPageState extends State<AddEventPage> {
   String _eventType = 'One Day';  // Default event type is 'One Day'
 
   // Function to select a single date for one-day events
-  Future<void> _selectDate(BuildContext context) async {
+ Future<void> _selectDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(), // Prevent selecting past dates
       lastDate: DateTime(2101),
     );
 
@@ -47,7 +47,7 @@ class _AddEventPageState extends State<AddEventPage> {
   Future<void> _selectDateRange(BuildContext context) async {
     DateTimeRange? newDateRange = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(), // Prevent selecting past dates
       lastDate: DateTime(2101),
     );
 
@@ -58,8 +58,6 @@ class _AddEventPageState extends State<AddEventPage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +66,7 @@ class _AddEventPageState extends State<AddEventPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
+            Navigator.pop(context);
             // Add back navigation functionality
           },
         ),
@@ -80,15 +79,10 @@ class _AddEventPageState extends State<AddEventPage> {
           child: ListView(
             children: [
               TextFormField(
-
-                      validator: (value)
-                      {
-                          if(value!.isEmpty)
-                          return "Event Name can't be empty";
-                          //Event Name is must
-                          return null;
-                      },
-
+                validator: (value) {
+                  if (value!.isEmpty) return "Event Name can't be empty";
+                  return null;
+                },
                 decoration: InputDecoration(
                   labelText: 'Event Name',
                   prefixIcon: Icon(Icons.edit),
@@ -103,20 +97,17 @@ class _AddEventPageState extends State<AddEventPage> {
                     _selectedDistrict = newValue;
                   });
                 },
-                 validator: (value)
-                      {
-                          if(value!.isEmpty)
-                          return "District can't be empty";
-                          //Event Name is must
-                          return null;
-                      },
+                validator: (value) {
+                  if (value == null || value.isEmpty) return "District can't be empty";
+                  return null;
+                },
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.public),
                   labelText: 'District',
                   border: OutlineInputBorder(),
-                  
                 ),
-                items: <String>['Colombo', 'Kandy', 'Jaffna','Batticlo', 'puttalam', 'Trincomale']
+                items: <String>['Colombo', 'Kandy', 'Jaffna', 'Batticaloa', 'Puttalam', 'Trincomalee', 'Galle', 'Matara', 'Hambantota', 'Kurunegala', 'Gampaha', 'Kalutara', 'Kegalle', 'Ratnapura', 'Nuwara Eliya', 'Matale', 'Moneragala', 'Badulla', 'Vavuniya', 'Mannar', 'Kilinochchi', 'Anuradhapura', 'Polonnaruwa', 'Sabaragamuwa']
+
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -126,25 +117,18 @@ class _AddEventPageState extends State<AddEventPage> {
               ),
               SizedBox(height: 16),
               TextFormField(
-
-                validator: (value)
-                      {
-                          if(value!.isEmpty)
-                          return "Event Location can't be empty";
-                          //Event Name is must
-                          return null;
-                      },
+                validator: (value) {
+                  if (value!.isEmpty) return "Event Location can't be empty";
+                  return null;
+                },
                 decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.location_on),
+                  prefixIcon: Icon(Icons.location_on),
                   labelText: 'Event Location',
                   border: OutlineInputBorder(),
                 ),
               ),
               SizedBox(height: 16),
-
-
-
-             Text('Event Type', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Event Type', style: TextStyle(fontWeight: FontWeight.bold)),
               Row(
                 children: [
                   Expanded(
@@ -177,9 +161,18 @@ class _AddEventPageState extends State<AddEventPage> {
               // Conditional date input based on selected event type
               if (_eventType == 'One Day')
                 GestureDetector(
-                  onTap: () => _selectDate(context), // Open single date picker
+                  onTap: () => _selectDate(context),
                   child: AbsorbPointer(
                     child: TextFormField(
+                      validator: (value) {
+                        if (_selectedDate == null) {
+                          return "Please select a valid event date.";
+                        }
+                        if (_selectedDate!.isBefore(DateTime.now())) {
+                          return "Event date cannot be in the past.";
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                         labelText: 'Event Date',
                         prefixIcon: Icon(Icons.calendar_today),
@@ -193,19 +186,20 @@ class _AddEventPageState extends State<AddEventPage> {
                     ),
                   ),
                 ),
-              
+
               if (_eventType == 'More Than One Day')
                 GestureDetector(
-                  onTap: () => _selectDateRange(context), // Open date range picker
+                  onTap: () => _selectDateRange(context),
                   child: AbsorbPointer(
                     child: TextFormField(
-
-                      validator: (value)
-                      {
-                          if(value!.isEmpty)
-                          return "Event Dates can't be empty";
-                          //Event Name is must
-                          return null;
+                      validator: (value) {
+                        if (_dateRange == null) {
+                          return "Please select a valid date range.";
+                        }
+                        if (_dateRange!.start.isBefore(DateTime.now())) {
+                          return "Event start date cannot be in the past.";
+                        }
+                        return null;
                       },
                       decoration: InputDecoration(
                         labelText: 'Event Dates',
@@ -222,14 +216,10 @@ class _AddEventPageState extends State<AddEventPage> {
                 ),
               SizedBox(height: 16),
               TextFormField(
- validator: (value)
-                      {
-                          if(value!.isEmpty)
-                          return "Event Description can't be empty";
-                          //Event Name is must
-                          return null;
-                      },
-                
+                validator: (value) {
+                  if (value!.isEmpty) return "Event Description can't be empty";
+                  return null;
+                },
                 decoration: InputDecoration(
                   labelText: 'Event Description',
                   border: OutlineInputBorder(),
