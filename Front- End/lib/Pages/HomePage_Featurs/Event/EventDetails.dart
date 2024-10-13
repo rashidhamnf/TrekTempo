@@ -18,7 +18,7 @@ body: Container(
   
   margin: EdgeInsets.only(top: 50.0, left: 20.0, right: 20.0),
   child: Column(
-    crossAxisAlignment: CrossAxisAlignment.center ,
+    crossAxisAlignment: CrossAxisAlignment.start ,
      children: [
   GestureDetector(
       
@@ -26,11 +26,33 @@ body: Container(
                     Navigator.pop(context);
 
       },
-      child:  Icon(Icons.arrow_back_ios_new_outlined, color: Colors.black,)),
-     Image.asset("images/CSF-Cover.png", width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height/3, 
-      fit: BoxFit.fill,
+      
+  child: Stack(
+    alignment: Alignment.center,
+    children: [
+      // Oval-shaped Image
+      ClipOval(
+        child: Image.asset(
+          "assets/images/Events/csf_cover.png",
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 3,
+          fit: BoxFit.cover,
+        ),
       ),
+      // Icon on top of the image
+      Positioned(
+        top: 16, // Adjust this value to position the icon
+        left: 16, // Adjust this value to position the icon
+        child: Icon(
+          Icons.arrow_back_ios_new_outlined,
+          color: Colors.black,
+          size: 30, // Adjust icon size if needed
+        ),
+      ),
+    ],
+  ),
+),
+
      
       Text("COLOMBO SHOPPING FESTIVAL – CSF", style: AppWidget.boldTextFieldStyle(),),
       Text("Ultimate Shoppers Paradise", style: AppWidget.semiBooldTextFieldStyle(),
