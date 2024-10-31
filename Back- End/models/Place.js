@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const placeSchema = new mongoose.Schema({
-
     district: {
         type: String,
         required: true,
@@ -31,9 +30,14 @@ const placeSchema = new mongoose.Schema({
         required: true,
     },
     images: {
-        type: Array,
+        type: [String],
         required: true,
     },
+    likedBy: {
+        type: [mongoose.Types.ObjectId],
+        required: false,
+        default: []
+    }
 });
 
 const Place = mongoose.model('Place', placeSchema);

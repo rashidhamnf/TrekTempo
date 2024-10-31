@@ -6,7 +6,7 @@ import 'package:travel_app/Pages/HomePage_Featurs/Components/Button.dart';
 class TripPersonTypePage extends StatefulWidget {
   final String endPoint;
   final String budget;
-  const TripPersonTypePage({Key? key, required this.endPoint, required this.budget}) : super(key: key);
+  const TripPersonTypePage({super.key, required this.endPoint, required this.budget});
 
   @override
   _TripPersonTypePageState createState() => _TripPersonTypePageState();
@@ -16,10 +16,34 @@ class _TripPersonTypePageState extends State<TripPersonTypePage> {
  
   String _tripPersonType = 'Solo';
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('  ')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text(
+          'Trip Person Type',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4.0),
+          child: Container(
+            color: Colors.black,
+            height: 0.5,
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -38,15 +62,15 @@ class _TripPersonTypePageState extends State<TripPersonTypePage> {
                   _buildRadioCard('Family', 'Family', Icons.group, Colors.orange),
                   _buildRadioCard('Friends', 'Friends', Icons.people, Colors.green),
                   const SizedBox(height: 16),
-                   Button(
-                text: 'Next',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TripTypePage(endPoint: widget.endPoint, budget: widget.budget, tripPersonType: _tripPersonType)),
-                  );
-                },
-              ),
+                  Button(
+                    text: 'Next',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TripTypePage(endPoint: widget.endPoint, budget: widget.budget, tripPersonType: _tripPersonType)),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -68,7 +92,7 @@ class _TripPersonTypePageState extends State<TripPersonTypePage> {
             Icon(icon, color: color),
             const SizedBox(width: 15),
             Expanded(
-              child: Text(label, style: TextStyle(fontSize: 16)),
+              child: Text(label, style: const TextStyle(fontSize: 16)),
             ),
             Radio(
               value: value,

@@ -1,11 +1,11 @@
 // places of distrcits
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:travel_app/Models/Place.dart';
 import 'package:travel_app/Pages/Destinations/district_places_card.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:travel_app/Pages/Destinations/add_place_form.dart';
 
 class DestinationCard extends StatefulWidget {
   final String district;
@@ -50,8 +50,31 @@ class _DestinationCardState extends State<DestinationCard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.district),
+        title: Text(widget.district,
+            style: const TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.w600)),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddPlaceForm()),
+              );
+            },
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4.0),
+          child: Container(
+            color: Colors.black,
+            height: 0.5,
+          ),
+        ),
       ),
       body: FutureBuilder<List<Place>>(
         future: futurePlaces,
@@ -74,15 +97,7 @@ class _DestinationCardState extends State<DestinationCard> {
                 final place = snapshot.data![index];
                 return Column(
                   children: [
-                    PlacesCard(
-                      city: place.city,
-                      direction: place.direction,
-                      imagePaths: place.images,
-                      title: place.name,
-                      location: place.location,
-                      description: place.description,
-                      likes: place.likes,
-                    ),
+                    PlacesCard(place: place),
                     const SizedBox(height: 16),
                   ],
                 );

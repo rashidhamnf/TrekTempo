@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_app/Models/weatherModel.dart';
-import 'package:travel_app/Pages/HomePage_Featurs/TripPlanning/Trip_Cards/AccommodationCard.dart';
 import 'package:travel_app/controller/api.dart';
-import 'package:travel_app/Pages/HomePage_Featurs/TripPlanning/Trip_Cards/TripPlanCard.dart';
-import 'package:travel_app/Pages/HomePage_Featurs/TripPlanning/AccommodationDetails.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TripPlanDetails extends StatefulWidget {
   final String district;
@@ -24,10 +22,10 @@ class TripPlanDetails extends StatefulWidget {
   });
 
   @override
-  _PlaceDetailsPageState createState() => _PlaceDetailsPageState();
+  _TripPlanDetailsState createState() => _TripPlanDetailsState();
 }
 
-class _PlaceDetailsPageState extends State<TripPlanDetails> {
+class _TripPlanDetailsState extends State<TripPlanDetails> {
   bool isLiked = false;
   bool isSaved = false;
   bool isExpanded = false;
@@ -143,6 +141,39 @@ class _PlaceDetailsPageState extends State<TripPlanDetails> {
                   ),
                   const SizedBox(height: 16),
 
+                  // Direction Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          var url = widget.locationLink; // Use the locationLink for direction
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          } else {
+                            throw 'Could not launch $url';
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.directions,
+                          color: Colors.blueAccent,
+                        ), // Set icon color to blue
+                        label: const Text(
+                          'Direction',
+                          style: TextStyle(
+                            color: Colors.blueAccent,
+                          ), // Set text color to blue
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white, // Button background color
+                          foregroundColor: Colors.blue, // Splash and highlight color
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
                   // Description
                   const Text("Description",
                       style: TextStyle(
@@ -180,17 +211,17 @@ class _PlaceDetailsPageState extends State<TripPlanDetails> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Text(
-                        "View Accommodation place",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 14,
-                        ),
-                      ),
+                      // decoration: BoxDecoration(
+                      //   border: Border.all(color: Colors.blue),
+                      //   borderRadius: BorderRadius.circular(8),
+                      // ),
+                      // child: const Text(
+                      //   "View Accommodation place",
+                      //   style: TextStyle(
+                      //     color: Colors.blue,
+                      //     fontSize: 14,
+                      //   ),
+                      // ),
                     ),
                   ),
                   const SizedBox(height: 16),

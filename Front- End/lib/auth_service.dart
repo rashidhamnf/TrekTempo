@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final String baseUrl = 'http://localhost:5000/api/auth'; // Update with your backend URL
@@ -41,8 +42,26 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      print('Sign in successful');
-      return true;
+      final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+      // Extract user data and token
+      final user = jsonData['user'];
+      final token = jsonData['token'];
+
+      if (user != null && token != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        // Save data to SharedPreferences
+        await prefs.setString('userName', user['name']);
+        await prefs.setString('userEmail', user['email']);
+        await prefs.setString('userId', user['_id']);
+        await prefs.setString('token', token);
+
+        print('Sign in successful, data saved to SharedPreferences');
+        return true;
+      } else {
+        print('Failed to parse user data or token');
+        return false;
+      }
     } else {
       print('Sign in failed: ${response.body}');
       return false;

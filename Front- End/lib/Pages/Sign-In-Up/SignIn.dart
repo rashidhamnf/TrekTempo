@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_app/Pages/ForgotPW/ForgotPassword-EnterMail.dart';
 import 'package:travel_app/Pages/Sign-In-Up/Components/TopImage.dart';
 import 'package:travel_app/Pages/Sign-In-Up/SignUp.dart';
 import 'package:travel_app/Pages/Sign-In-Up/Components/Button.dart';
@@ -6,8 +7,11 @@ import 'package:travel_app/Pages/PageCommonComponents/TrekTempo_Appbar.dart';
 import 'package:travel_app/Pages/Sign-In-Up/Components/InputTextBox.dart';
 import 'package:travel_app/Pages/HomePage_Featurs/MainHomePage.dart';
 import 'package:travel_app/auth_service.dart'; // Make sure this points to your ApiService
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -17,6 +21,26 @@ class _SignInPageState extends State<SignInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final ApiService apiService = ApiService(); // Create an instance of ApiService
+
+  bool _obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainHomePage()),
+      );
+    }
+  }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
@@ -62,7 +86,7 @@ class _SignInPageState extends State<SignInPage> {
                     const Text(
                       'Sign In',
                       style: TextStyle(
-                        fontSize: 40,
+                        fontSize: 32,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -81,8 +105,35 @@ class _SignInPageState extends State<SignInPage> {
                       isPassword: true,
                       controller: _passwordController,
                       validator: _validatePassword,
+                      obscureText: _obscurePassword,
+                      toggleObscureText: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
                     ),
-                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                            );
+                          },
+                          child: const Text(
+                            'Forgot password?',
+                            style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     Center(
                       child: Button(
                         text: 'Sign In',
@@ -94,15 +145,19 @@ class _SignInPageState extends State<SignInPage> {
                               _passwordController.text,
                             );
                             if (success) {
+                              // Save login status
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              await prefs.setBool('isLoggedIn', true);
+
                               // Navigate to the home page
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => MainHomePage()),
+                                MaterialPageRoute(builder: (context) => const MainHomePage()),
                               );
                             } else {
                               // Show an error message
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Sign in failed! Please try again.')),
+                                const SnackBar(content: Text('Sign in failed! Please try again.')),
                               );
                             }
                           } else {
